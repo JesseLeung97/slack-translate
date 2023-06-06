@@ -1,15 +1,20 @@
-use axum::{http::StatusCode, routing::{get, post}, Router};
-use std::{net::SocketAddr, error::Error};
-mod slackbot;
-mod deepl;
-mod models;
-mod translate;
+use crate::fileserver::file_handler;
 use crate::translate::receive_translation_request;
+use axum::{
+    routing::{get, post},
+    Router,
+};
+use std::{error::Error, net::SocketAddr};
+mod deepl;
+mod fileserver;
+mod models;
+mod slackbot;
+mod translate;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
     let app = Router::new()
-        .route("/", get(handler))
+        .nest_service("/", get(file_handler))
         .route("/translate", post(receive_translation_request));
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 8080));
@@ -20,9 +25,4 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .unwrap();
 
     Ok(())
-}
-
-async fn handler() -> (StatusCode, String) {
-    println!("Hello, world!");
-    (StatusCode::OK, String::from("Hello, World!"))
 }

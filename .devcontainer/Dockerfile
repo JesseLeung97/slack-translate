@@ -37,6 +37,7 @@ RUN rustup target add x86_64-unknown-linux-musl
 RUN rustup toolchain install stable-x86_64-unknown-linux-musl
 RUN rustup target add aarch64-unknown-linux-musl
 RUN rustup toolchain install stable-aarch64-unknown-linux-musl
+RUN rustup component add rustfmt
 
 # Create the docker.sock and give the user promissions accessing it
 RUN touch /var/run/docker.sock \
