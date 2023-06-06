@@ -1,0 +1,12 @@
+mod slack_payload;
+pub use self::slack_payload::{SlackPayload, SlackMessage, SlackChannel, SlackUser};
+mod slack_request;
+pub use self::slack_request::{SlackIncomingTranslationRequest, SlackSendMessageRequest};
+mod slack_response;
+pub use self::slack_response::SlackResponse;
+mod deepl_payload;
+pub use self::deepl_payload::DeepLPostBody;
+mod deepl_response;
+pub use self::deepl_response::{DeepLResponse, DeepLTranslation};
+mod language;
+pub use self::language::Language;

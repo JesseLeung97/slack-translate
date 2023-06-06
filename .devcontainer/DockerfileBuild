@@ -1,0 +1,21 @@
+FROM rust:1.67 as builder
+
+RUN USER=root cargo new --bin slack-translate
+WORKDIR /slack-translate
+
+COPY ./Cargo.lock ./Cargo.lock
+COPY ./Cargo.toml ./Cargo.toml
+
+RUN cargo build --release
+RUN rm src/*.rs
+
+COPY ./src ./src
+
+EXPOSE 8080
+
+RUN rm ./target/release/deps/slack_translate*
+RUN cargo build --release
+
+FROM debian:buster-slim
+
+COPY --from=builder /slack-translate/target/release/slack-translate /usr/src/slack-translate

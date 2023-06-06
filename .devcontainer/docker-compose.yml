@@ -1,0 +1,24 @@
+version: '3'
+
+services:
+    bot:
+        container_name: slack-translate
+        restart: always
+        hostname: slack-translate.local
+        build:
+            dockerfile: Dockerfile
+            context: .
+        depends_on:
+            - redis
+        volumes:
+            - ..:/workspace:cached
+        command: sleep infinity
+    redis:
+        container_name: slack-translate-cache
+        image: redis:latest
+        volumes:
+            - redis:/data
+    
+volumes:
+    redis:
+    bot:
