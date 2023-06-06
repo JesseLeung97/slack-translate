@@ -1,7 +1,4 @@
-use axum::{
-    http::{StatusCode, Response}, 
-    routing::{get, post}, 
-    Router};
+use axum::{http::StatusCode, routing::{get, post}, Router};
 use std::{net::SocketAddr, error::Error};
 mod slackbot;
 mod deepl;
