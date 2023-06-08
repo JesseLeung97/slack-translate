@@ -21,10 +21,7 @@ pub async fn get_translation(post_body: DeepLPostBody) -> Result<DeepLTranslatio
         .send()
         .await?;
 
-    let deepl_response = match from_str::<DeepLResponse>(response.text().await?.as_str()) {
-        Ok(res) => res,
-        Err(e) => return Err(Box::new(e))
-    };
+    let deepl_response = from_str::<DeepLResponse>(response.text().await?.as_str())?;
 
     if let Some(translation) = deepl_response.translations.first() {
         return Ok(translation.to_owned());
