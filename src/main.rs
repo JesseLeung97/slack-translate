@@ -1,5 +1,6 @@
 use crate::cache::get_redis_connection_manager;
 use crate::fileserver::file_handler;
+use crate::models::AppState;
 use crate::translate::receive_translation_request;
 use axum::{
     routing::{get, post},
@@ -15,7 +16,7 @@ mod translate;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
-    let mut redis_connection = get_redis_connection()?;
+    let redis_connection = get_redis_connection_manager().await?;
     let app_state = AppState::new(redis_connection);
 
     let app = Router::new()

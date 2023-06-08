@@ -2,10 +2,9 @@ use std::str::FromStr;
 
 use axum::extract::State;
 use axum::{http::StatusCode, Form};
-use redis::Cmd;
 use serde_json::from_str;
 
-use crate::cache::{self, check_cache};
+use crate::cache::check_cache;
 use crate::deepl::get_translation;
 use crate::models::{
     AppState, DeepLPostBody, Language, SlackIncomingTranslationRequest, SlackPayload,
@@ -13,8 +12,8 @@ use crate::models::{
 use crate::slackbot::send_translation_reply;
 
 pub async fn receive_translation_request(
-    Form(req): Form<SlackIncomingTranslationRequest>,
     State(state): State<AppState>,
+    Form(req): Form<SlackIncomingTranslationRequest>,
 ) -> (StatusCode, String) {
     tokio::spawn(translate(req, state));
     (StatusCode::OK, String::from("Translation request received"))
@@ -30,7 +29,7 @@ async fn translate(req: SlackIncomingTranslationRequest, state: AppState) -> (St
 
     let message_text = &form_body.message.text;
 
-    let cache_check = check_cache(message_text, state.connection_manager.clone());
+    let cache_check = check_cache(message_text, state.connection_manager.clone()).await;
 
     if cache_check.is_some() {
         return (StatusCode::OK, cache_check.unwrap());
