@@ -13,11 +13,15 @@ services:
         volumes:
             - ..:/workspace:cached
         command: sleep infinity
+        ports: 
+            - "8080:80"
     redis:
         container_name: slack-translate-cache
         image: redis:latest
         volumes:
             - redis:/data
+        ports:
+            - "6379:6379"
     
 volumes:
     redis:

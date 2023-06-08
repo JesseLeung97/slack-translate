@@ -1,3 +1,4 @@
+use crate::cache::get_redis_connection_manager;
 use crate::fileserver::file_handler;
 use crate::translate::receive_translation_request;
 use axum::{
@@ -5,6 +6,7 @@ use axum::{
     Router,
 };
 use std::{error::Error, net::SocketAddr};
+mod cache;
 mod deepl;
 mod fileserver;
 mod models;
@@ -13,12 +15,17 @@ mod translate;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
+    let mut redis_connection = get_redis_connection()?;
+    let app_state = AppState::new(redis_connection);
+
     let app = Router::new()
         .nest_service("/", get(file_handler))
-        .route("/translate", post(receive_translation_request));
+        .route("/translate", post(receive_translation_request))
+        .with_state(app_state);
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 8080));
     println!("listening on {}", addr);
+
     axum::Server::bind(&addr)
         .serve(app.into_make_service())
         .await
