@@ -1,3 +1,4 @@
+use crate::filewriter::populate_html;
 use axum::{
     body::{boxed, Body, BoxBody},
     http::{Request, Response, StatusCode, Uri},
@@ -15,7 +16,14 @@ pub async fn file_handler(uri: Uri) -> Result<Response<BoxBody>, (StatusCode, St
     let uri = Uri::from_parts(uri_parts).unwrap();
 
     let res = get_static_file(uri.clone()).await?;
-    println!("{:?}", res);
+
+    match populate_html(uri.path(), vec!["test"]) {
+        Err(err) => return Err((
+            StatusCode::INTERNAL_SERVER_ERROR, 
+            format!("There was a problem populating the page with fresh data. {}", err)
+        )),
+        Ok(_) => () 
+    }
 
     if res.status() == StatusCode::NOT_FOUND {
         match format!("{}.html", uri).parse() {
@@ -29,7 +37,7 @@ pub async fn file_handler(uri: Uri) -> Result<Response<BoxBody>, (StatusCode, St
 
 async fn get_static_file(uri: Uri) -> Result<Response<BoxBody>, (StatusCode, String)> {
     let req = Request::builder().uri(uri).body(Body::empty()).unwrap();
-    match ServeDir::new("./src/html").oneshot(req).await {
+    match ServeDir::new("./generated").oneshot(req).await {
         Ok(res) => Ok(res.map(boxed)),
         Err(err) => Err((
             StatusCode::INTERNAL_SERVER_ERROR,

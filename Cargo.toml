@@ -16,5 +16,6 @@ cargo-edit = "0.11.9"
 reqwest = { version = "0.11.16", features = ["json"] }
 serde_json = "1.0.96"
 tower = "0.4.13"
-tower-http = { version = "0.4.0", features = ["fs"] }
+tower-http = { version = "0.4.0", features = ["fs", "normalize-path"] }
 redis = { version = "0.23.0", features = ["aio", "connection-manager", "tokio-comp"] }
+aho-corasick = "1.0.2"

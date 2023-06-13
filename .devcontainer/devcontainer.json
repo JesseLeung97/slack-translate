@@ -28,7 +28,7 @@
     },
     "forwardPorts": [
         8080,
-        6379
+        6380
     ],
     "remoteUser": "slack-translate",
     "postCreateCommand": "/bin/bash -c \"git config --global --add safe.directory ${containerWorkspaceFolder}\"",

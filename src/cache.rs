@@ -1,7 +1,7 @@
-use redis::{aio::ConnectionManager, cmd, FromRedisValue, RedisError};
+use redis::{aio::ConnectionManager, cmd, Client, FromRedisValue, RedisError, RedisResult};
 
-pub async fn get_redis_connection_manager() -> redis::RedisResult<ConnectionManager> {
-    let client = redis::Client::open("redis://127.0.0.1:6379/")?;
+pub async fn get_redis_connection_manager() -> RedisResult<ConnectionManager> {
+    let client = Client::open("redis://localhost:6380")?;
     let connection_manager = ConnectionManager::new(client).await?;
 
     Ok(connection_manager)

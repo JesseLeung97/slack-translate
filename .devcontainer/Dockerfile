@@ -31,7 +31,8 @@ RUN apt-get update && apt-get install -y bash \
     libssl-dev \
     musl-dev \
     docker.io \
-    librust-pkg-config-dev
+    librust-pkg-config-dev \
+    redis-server
 
 RUN rustup target add x86_64-unknown-linux-musl
 RUN rustup toolchain install stable-x86_64-unknown-linux-musl

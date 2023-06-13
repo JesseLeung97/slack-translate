@@ -18,10 +18,11 @@ services:
     redis:
         container_name: slack-translate-cache
         image: redis:latest
+        command: --port 6380
         volumes:
             - redis:/data
         ports:
-            - "6379:6379"
+            - "6380:6380"
     
 volumes:
     redis:

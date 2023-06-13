@@ -1,6 +1,6 @@
-use std::{env, error::Error};
 use dotenv::dotenv;
 use serde_json::from_str;
+use std::{env, error::Error};
 
 use crate::models::{DeepLPostBody, DeepLResponse, DeepLTranslation};
 
@@ -15,7 +15,7 @@ pub async fn get_translation(post_body: DeepLPostBody) -> Result<DeepLTranslatio
         .post(url)
         .header(
             reqwest::header::AUTHORIZATION,
-            format!("DeepL-Auth-Key {}", deepl_auth_token)
+            format!("DeepL-Auth-Key {}", deepl_auth_token),
         )
         .json(&post_body)
         .send()
@@ -26,6 +26,6 @@ pub async fn get_translation(post_body: DeepLPostBody) -> Result<DeepLTranslatio
     if let Some(translation) = deepl_response.translations.first() {
         return Ok(translation.to_owned());
     } else {
-        return Err("Translation failed".into())
+        return Err("Translation failed".into());
     }
 }

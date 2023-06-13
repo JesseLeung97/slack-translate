@@ -24,7 +24,7 @@ async fn translate(req: SlackIncomingTranslationRequest, state: AppState) -> (St
 
     let form_body = match from_str::<SlackPayload>(req.payload.as_str()) {
         Ok(fb) => fb,
-        Err(e) => return (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()),
+        Err(err) => return (StatusCode::INTERNAL_SERVER_ERROR, err.to_string()),
     };
 
     let message_text = &form_body.message.text;
@@ -42,12 +42,12 @@ async fn translate(req: SlackIncomingTranslationRequest, state: AppState) -> (St
 
     let translated_english = match get_translation(deepl_post_body_english).await {
         Ok(res) => res,
-        Err(e) => return (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()),
+        Err(err) => return (StatusCode::INTERNAL_SERVER_ERROR, err.to_string()),
     };
 
     let translated_japanese = match get_translation(deepl_post_body_japanese).await {
         Ok(res) => res,
-        Err(e) => return (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()),
+        Err(err) => return (StatusCode::INTERNAL_SERVER_ERROR, err.to_string()),
     };
 
     let translation =
