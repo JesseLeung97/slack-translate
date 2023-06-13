@@ -25,3 +25,16 @@ pub async fn check_cache(
         Err(_) => return None,
     }
 }
+
+pub async fn increment_user_count(
+    user_id: &str,
+    mut connection_manager: ConnectionManager
+) -> Result<(), RedisError> {
+    let mut command = cmd("INCR");
+    command.arg(user_id);
+
+    let redis_result = connection_manager.send_packed_command(&command).await?;
+    println!("{:?}", redis_result);
+
+    Ok(())
+}

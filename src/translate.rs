@@ -10,6 +10,7 @@ use crate::models::{
     AppState, DeepLPostBody, Language, SlackIncomingTranslationRequest, SlackPayload,
 };
 use crate::slackbot::send_translation_reply;
+use crate::models::parse_user;
 
 pub async fn receive_translation_request(
     State(state): State<AppState>,
@@ -28,6 +29,7 @@ async fn translate(req: SlackIncomingTranslationRequest, state: AppState) -> (St
     };
 
     let message_text = &form_body.message.text;
+    let user_id = &form_body.user.id;
 
     let cache_check = check_cache(message_text, state.connection_manager.clone()).await;
 

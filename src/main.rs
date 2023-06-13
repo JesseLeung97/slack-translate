@@ -14,6 +14,7 @@ mod filewriter;
 mod models;
 mod slackbot;
 mod translate;
+mod analytics;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {

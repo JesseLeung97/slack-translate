@@ -10,3 +10,5 @@ mod language;
 pub use self::language::Language;
 mod app_state;
 pub use self::app_state::AppState;
+mod slack_users;
+pub use self::slack_users::{Users, parse_user};
