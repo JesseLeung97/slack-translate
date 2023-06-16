@@ -1,8 +1,9 @@
-use std::fs::{self, File };
+use std::fs::{File, read_to_string};
 use std::io::{BufWriter, Error, Write };
-use aho_corasick::AhoCorasick; 
+use aho_corasick::AhoCorasick;
 
-pub fn populate_html(filename: &str, input_strings: Vec<&str>) -> Result<(), Error> {
+
+pub fn populate_html(filename: &str) -> Result<(), Error> {
     let mut filename = filename.to_string();
     if filename.len() > 0 {
         filename.remove(0);
@@ -11,7 +12,7 @@ pub fn populate_html(filename: &str, input_strings: Vec<&str>) -> Result<(), Err
     let file_path = format!("src/html/{}.html", &filename);
     let generated_file_path = format!("generated/{}.html", &filename);
 
-    let file_contents = fs::read_to_string(&file_path)?;
+    let file_contents = read_to_string(&file_path)?;
 
     let ac_input = AhoCorasick::new(vec!["{placeholder}"]).unwrap();
     let ac_replace_strings = vec!["I'm replaced!", "Number two!"];

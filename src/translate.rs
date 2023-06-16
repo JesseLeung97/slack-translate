@@ -1,26 +1,27 @@
-use std::str::FromStr;
-
-use axum::extract::State;
+use std::{str::FromStr, sync::Arc};
+use axum::Extension;
 use axum::{http::StatusCode, Form};
 use serde_json::from_str;
 
+use crate::analytics::update_analytics;
 use crate::cache::check_cache;
+use crate::database::append_to_translation_log;
 use crate::deepl::get_translation;
 use crate::models::{
     AppState, DeepLPostBody, Language, SlackIncomingTranslationRequest, SlackPayload,
 };
 use crate::slackbot::send_translation_reply;
-use crate::models::parse_user;
 
 pub async fn receive_translation_request(
-    State(state): State<AppState>,
+    state: Extension<Arc<AppState>>,
     Form(req): Form<SlackIncomingTranslationRequest>,
-) -> (StatusCode, String) {
+) -> StatusCode {
+    
     tokio::spawn(translate(req, state));
-    (StatusCode::OK, String::from("Translation request received"))
+    StatusCode::OK
 }
 
-async fn translate(req: SlackIncomingTranslationRequest, state: AppState) -> (StatusCode, String) {
+async fn translate(req: SlackIncomingTranslationRequest, state: Extension<Arc<AppState>>) -> (StatusCode, String) {
     println!("Received request");
 
     let form_body = match from_str::<SlackPayload>(req.payload.as_str()) {
@@ -31,10 +32,8 @@ async fn translate(req: SlackIncomingTranslationRequest, state: AppState) -> (St
     let message_text = &form_body.message.text;
     let user_id = &form_body.user.id;
 
-    let cache_check = check_cache(message_text, state.connection_manager.clone()).await;
-
-    if cache_check.is_some() {
-        return (StatusCode::OK, cache_check.unwrap());
+    if let Some(cache_check) = check_cache(message_text, state.cache_connection.clone()).await {
+        return (StatusCode::OK, cache_check);
     }
 
     let input_vector = vec![message_text.clone()];
@@ -56,7 +55,33 @@ async fn translate(req: SlackIncomingTranslationRequest, state: AppState) -> (St
         match Language::from_str(translated_english.detected_source_language.as_str()).unwrap() {
             Language::EN => translated_japanese,
             Language::JA => translated_english,
-        };
+    };
+
+    if let Err(_) = append_to_translation_log(
+        user_id, 
+        &Language::from_str(&translation.detected_source_language).unwrap(), 
+        &message_text, 
+        &translation.text, 
+        &state.database_connection
+    ) {
+        return (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            String::from("Failed to record translation to the database")
+        );
+    }
+
+    if let Err(_) = update_analytics(
+        state.cache_connection.clone(), 
+        user_id, 
+        &Language::from_str(translation.detected_source_language.as_str()).unwrap(),
+        &message_text,
+        &translation.text
+    ).await {
+        return (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            String::from("Failed to update analytics")
+        );
+    };
 
     match send_translation_reply(&translation, &form_body).await {
         Ok(_) => (StatusCode::OK, translation.text),

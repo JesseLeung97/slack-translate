@@ -20,3 +20,4 @@ tower-http = { version = "0.4.0", features = ["fs", "normalize-path"] }
 redis = { version = "0.23.0", features = ["aio", "connection-manager", "tokio-comp"] }
 aho-corasick = "1.0.2"
 phf = { version = "0.11.1", features = ["macros"] }
+sqlite = "0.30.5"

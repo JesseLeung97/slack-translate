@@ -1,12 +1,16 @@
 use redis::aio::ConnectionManager;
+use sqlite::ConnectionWithFullMutex;
 
-#[derive(Clone)]
 pub struct AppState {
-    pub connection_manager: ConnectionManager,
+    pub cache_connection: ConnectionManager,
+    pub database_connection: ConnectionWithFullMutex
 }
 
 impl AppState {
-    pub fn new(connection_manager: ConnectionManager) -> AppState {
-        AppState { connection_manager }
+    pub fn new(cache_connection: ConnectionManager, database_connection: ConnectionWithFullMutex) -> AppState {
+        AppState { 
+            cache_connection,
+            database_connection
+        }
     }
 }

@@ -1,12 +1,18 @@
-use crate::filewriter::populate_html;
+use std::sync::Arc;
 use axum::{
     body::{boxed, Body, BoxBody},
     http::{Request, Response, StatusCode, Uri},
+    Extension
 };
 use tower::ServiceExt;
 use tower_http::services::ServeDir;
+use crate::models::AppState;
+use crate::filewriter::populate_html;
 
-pub async fn file_handler(uri: Uri) -> Result<Response<BoxBody>, (StatusCode, String)> {
+pub async fn file_handler(
+    state: Extension<Arc<AppState>>,
+    uri: Uri
+) -> Result<Response<BoxBody>, (StatusCode, String)> {
     let mut uri_parts = uri.clone().into_parts();
     uri_parts.path_and_query = match uri.path() {
         "/" => Some("/home".parse().unwrap()),
@@ -14,16 +20,14 @@ pub async fn file_handler(uri: Uri) -> Result<Response<BoxBody>, (StatusCode, St
         _ => Some(uri.path().parse().unwrap()),
     };
     let uri = Uri::from_parts(uri_parts).unwrap();
-
     let res = get_static_file(uri.clone()).await?;
 
-    match populate_html(uri.path(), vec!["test"]) {
-        Err(err) => return Err((
+    if let Err(err) = populate_html(uri.path()) {
+        return Err((
             StatusCode::INTERNAL_SERVER_ERROR, 
             format!("There was a problem populating the page with fresh data. {}", err)
-        )),
-        Ok(_) => () 
-    }
+        ));
+    };
 
     if res.status() == StatusCode::NOT_FOUND {
         match format!("{}.html", uri).parse() {

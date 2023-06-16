@@ -1597,6 +1597,7 @@ dependencies = [
  "reqwest",
  "serde",
  "serde_json",
+ "sqlite",
  "tokio",
  "tower",
  "tower-http",
@@ -1643,6 +1644,36 @@ name = "spin"
 version = "0.5.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6e63cff320ae2c57904679ba7cb63280a3dc4613885beafb148ee7bf9aa9042d"
+
+[[package]]
+name = "sqlite"
+version = "0.30.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6ecc4cead695dcc5c878c707fdd03f4599f6dc9fe27849646590e2291f506ed1"
+dependencies = [
+ "libc",
+ "sqlite3-sys",
+]
+
+[[package]]
+name = "sqlite3-src"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bda2cfd878989f78fd5e49d5d986feaf9ea995a894188c179d7210eb9e304916"
+dependencies = [
+ "cc",
+ "pkg-config",
+]
+
+[[package]]
+name = "sqlite3-sys"
+version = "0.15.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c3725dad095b62f856f8448e05f8d6206960391b2b9095585807d6726faf8987"
+dependencies = [
+ "libc",
+ "sqlite3-src",
+]
 
 [[package]]
 name = "strsim"
