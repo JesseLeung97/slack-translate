@@ -2,8 +2,6 @@ use std::{str::FromStr, sync::Arc};
 use axum::Extension;
 use axum::{http::StatusCode, Form};
 use serde_json::from_str;
-
-use crate::analytics::update_analytics;
 use crate::cache::check_cache;
 use crate::database::append_to_translation_log;
 use crate::deepl::get_translation;
@@ -69,19 +67,6 @@ async fn translate(req: SlackIncomingTranslationRequest, state: Extension<Arc<Ap
             String::from("Failed to record translation to the database")
         );
     }
-
-    if let Err(_) = update_analytics(
-        state.cache_connection.clone(), 
-        user_id, 
-        &Language::from_str(translation.detected_source_language.as_str()).unwrap(),
-        &message_text,
-        &translation.text
-    ).await {
-        return (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            String::from("Failed to update analytics")
-        );
-    };
 
     match send_translation_reply(&translation, &form_body).await {
         Ok(_) => (StatusCode::OK, translation.text),

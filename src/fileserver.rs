@@ -22,7 +22,7 @@ pub async fn file_handler(
     let uri = Uri::from_parts(uri_parts).unwrap();
     let res = get_static_file(uri.clone()).await?;
 
-    if let Err(err) = populate_html(uri.path()) {
+    if let Err(err) = populate_html(uri.path(), &state.database_connection) {
         return Err((
             StatusCode::INTERNAL_SERVER_ERROR, 
             format!("There was a problem populating the page with fresh data. {}", err)

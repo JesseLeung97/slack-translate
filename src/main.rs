@@ -28,10 +28,10 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let app_state = Arc::new(app_state);
 
     let app = Router::new()
-        .nest_service("/", get(file_handler).layer(Extension(app_state.clone())))
+        .nest_service("/", get(file_handler))
         .route("/translate", post(receive_translation_request))
         .layer(Extension(app_state.clone()));
-
+        
     let addr = SocketAddr::from(([127, 0, 0, 1], 8081));
     println!("listening on {}", addr);
 
