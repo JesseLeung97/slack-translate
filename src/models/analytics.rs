@@ -6,14 +6,15 @@ pub struct UserAnalytics {
     pub user_name: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct TranslationLog {
-    id: usize,
-    user_id: String,
-    user_name: String,
-    language: Language,
-    original_text: String,
-    translated_text: String
+    pub id: usize,
+    pub user_id: String,
+    pub user_name: String,
+    pub language: Language,
+    pub original_text: String,
+    pub translated_text: String,
+    pub created: String 
 }
 
 pub enum Analytics {
@@ -39,7 +40,8 @@ impl TranslationLog {
         user_name: String,
         language: Language,
         original_text: String,
-        translated_text: String
+        translated_text: String,
+        created: String
     ) -> TranslationLog {
         TranslationLog { 
             id,
@@ -47,7 +49,8 @@ impl TranslationLog {
             user_name,
             language,
             original_text,
-            translated_text
+            translated_text,
+            created
         }
     }
 }

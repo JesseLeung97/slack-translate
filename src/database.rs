@@ -58,7 +58,7 @@ pub fn get_translation_log(database_connection: &ConnectionWithFullMutex) -> Res
         let language: String = statement.read("language")?;
         let original_text: String = statement.read("original_text")?;
         let translated_text: String = statement.read("translate_text")?;
-
+        let created: String = statement.read("created")?;
 
         let translation = TranslationLog::new(
              id as usize,
@@ -66,7 +66,8 @@ pub fn get_translation_log(database_connection: &ConnectionWithFullMutex) -> Res
              user_name,
              Language::from_str(&language).unwrap(),
              original_text,
-             translated_text
+             translated_text,
+             created
         );
 
         translations.push(translation);
