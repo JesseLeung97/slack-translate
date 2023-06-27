@@ -50,11 +50,12 @@ pub fn populate_html(filename: &str, database_connection: &ConnectionWithFullMut
 
     let file_contents = read_to_string(&file_path)?;
 
-    let ac_input = AhoCorasick::new(vec!["{placeholder}", "{loop}"]).unwrap();
+    let ac_input = AhoCorasick::new(vec!["{Value}", "{Loop}"]).unwrap();
     let ac_replace_strings = vec!["I'm replaced!", "Number two!"];
     
     let mut iter = 0;
     let mut replace_result = String::new();
+
     ac_input.replace_all_with(&file_contents, &mut replace_result, |_, found_string, write_to| {
         match Placeholder::from_str(found_string).unwrap() {
             Placeholder::Value => {
@@ -108,10 +109,15 @@ fn loop_translation_log(translation_logs: Vec<TranslationLog>) -> String {
             ",
             translation_log.language.to_string(),
             translation_log.created,
-            translation_log.user_name,
+            translation_log.user_id,
             translation_log.original_text,
             translation_log.translated_text
         );
+
+
+        println!("{:?}", translation_log.original_text);
+        
+        println!("{:?}", translation_log.translated_text);
 
         populated_translation_logs.push_str(html_string.as_str());
 
