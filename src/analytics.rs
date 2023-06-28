@@ -1,6 +1,6 @@
 use std::{ error::Error, collections::HashMap };
 use sqlite::ConnectionWithFullMutex;
-use crate::database::{ get_translation_log, get_users };
+use crate::database::get_translation_log;
 use crate::models::Analytics;
 
 pub fn get_analytics(database_connection: &ConnectionWithFullMutex) -> Result<Analytics, Box<dyn Error>> {
@@ -15,7 +15,7 @@ pub fn get_analytics(database_connection: &ConnectionWithFullMutex) -> Result<An
     for translation in &translation_log {
         count_by_language.entry(translation.language.to_string()).and_modify(|count| *count += 1).or_insert(1);
         count_by_date.entry(translation.created.to_owned()).and_modify(|count| *count += 1).or_insert(1);
-        count_by_team_member.entry(translation.user_id.to_owned()).and_modify(|count| *count += 1).or_insert(1);
+        count_by_team_member.entry(translation.user_name.to_owned()).and_modify(|count| *count += 1).or_insert(1);
         total_count += 1;
     }
 
@@ -29,13 +29,3 @@ pub fn get_analytics(database_connection: &ConnectionWithFullMutex) -> Result<An
 
     Ok(analytics)
 }
-
-// pub fn get_user_names(database_connection: &ConnectionWithFullMutex) -> Result<HashMap<String, String>, Box<dyn Error>> {
-  //  let users = get_users(&database_connection)?;
-
-   // for user in &users {
-
-    
-
-    //}
-//}

@@ -29,6 +29,7 @@ async fn translate(req: SlackIncomingTranslationRequest, state: Extension<Arc<Ap
 
     let message_text = &form_body.message.text;
     let user_id = &form_body.user.id;
+    let user_name = &form_body.user.username;
 
     if let Some(cache_check) = check_cache(message_text, state.cache_connection.clone()).await {
         return (StatusCode::OK, cache_check);
@@ -57,6 +58,7 @@ async fn translate(req: SlackIncomingTranslationRequest, state: Extension<Arc<Ap
 
     if let Err(_) = append_to_translation_log(
         user_id, 
+        user_name,
         &Language::from_str(&translation.detected_source_language).unwrap(), 
         &message_text, 
         &translation.text, 

@@ -11,25 +11,19 @@ pub struct UserAnalytics {
 pub struct TranslationLog {
     pub id: usize,
     pub user_id: String,
+    pub user_name: String,
     pub language: Language,
     pub original_text: String,
     pub translated_text: String,
     pub created: String 
 }
 
-impl UserAnalytics {
-    pub fn new(user_id: String, user_name: String) -> UserAnalytics {
-        UserAnalytics { 
-            user_id, 
-            user_name 
-        }
-    }
-}
 
 impl TranslationLog {
     pub fn new(
         id: usize,
         user_id: String,
+        user_name: String,
         language: Language,
         original_text: String,
         translated_text: String,
@@ -38,6 +32,7 @@ impl TranslationLog {
         TranslationLog { 
             id,
             user_id,
+            user_name,
             language,
             original_text,
             translated_text,
