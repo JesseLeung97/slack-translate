@@ -2,7 +2,7 @@ use std::{str::FromStr, sync::Arc};
 use axum::Extension;
 use axum::{http::StatusCode, Form};
 use serde_json::from_str;
-use crate::cache::check_cache;
+use crate::cache::{check_cache, set_cache};
 use crate::database::append_to_translation_log;
 use crate::deepl::get_translation;
 use crate::models::{
@@ -31,6 +31,21 @@ async fn translate(req: SlackIncomingTranslationRequest, state: Extension<Arc<Ap
     let user_id = &form_body.user.id;
 
     if let Some(cache_check) = check_cache(message_text, state.cache_connection.clone()).await {
+        // aA
+        // pend to translate log 
+
+        if let Err(_) = append_to_translation_log(
+            user_id, 
+            &Language::from_str(&translation.detected_source_language).unwrap(), 
+            &message_text, 
+            &cache_check, 
+            &state.database_connection
+        ) {
+            return (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                String::from("Failed to record translation to the database")
+                );
+        }
         return (StatusCode::OK, cache_check);
     }
 
@@ -54,6 +69,10 @@ async fn translate(req: SlackIncomingTranslationRequest, state: Extension<Arc<Ap
             Language::EN => translated_japanese,
             Language::JA => translated_english,
     };
+
+    if let Err(err) = set_cache(&message_text, &translation.text, state.cache_connection.clone()).await {
+       return (StatusCode::INTERNAL_SERVER_ERROR, err.to_string()); 
+    }
 
     if let Err(_) = append_to_translation_log(
         user_id, 
