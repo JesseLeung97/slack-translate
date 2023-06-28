@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use crate::models::Language;
 
 #[derive(Debug)]
@@ -17,21 +18,6 @@ pub struct TranslationLog {
     pub created: String 
 }
 
-pub enum Analytics {
-    Total(usize),
-    En(usize),
-    Ja(usize),
-    User(UserAnalytics)
-}
-
-impl UserAnalytics {
-    pub fn new(user_id: String, user_name: String) -> UserAnalytics {
-        UserAnalytics { 
-            user_id, 
-            user_name 
-        }
-    }
-}
 
 impl TranslationLog {
     pub fn new(
@@ -54,3 +40,31 @@ impl TranslationLog {
         }
     }
 }
+
+
+pub struct Analytics {
+    pub total_count: usize,
+    pub translation_log: Vec<TranslationLog>,
+    pub count_by_date: HashMap<String, usize>,
+    pub count_by_team_member:  HashMap::<String, usize>,
+    pub count_by_language: HashMap::<String, usize>,
+}
+
+impl Analytics {
+    pub fn new(
+        total_count: usize,
+        translation_log: Vec<TranslationLog>,
+        count_by_date: HashMap<String, usize>,
+        count_by_team_member: HashMap<String, usize>,
+        count_by_language: HashMap<String, usize>
+    ) -> Analytics {
+        Analytics {
+            total_count,
+            translation_log,
+            count_by_date, 
+            count_by_team_member,
+            count_by_language
+        }
+    }
+}
+
