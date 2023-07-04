@@ -12,3 +12,5 @@ mod app_state;
 pub use self::app_state::AppState;
 mod analytics;
 pub use self::analytics::{Analytics, UserAnalytics, TranslationLog};
+mod cache;
+pub use self::cache::CacheHit;

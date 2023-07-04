@@ -1,6 +1,6 @@
-use std::error::Error;
 use redis::{aio::ConnectionManager, cmd, Client, FromRedisValue, RedisError, RedisResult, Pipeline};
-use crate::models::Language;
+use crate::models::{Language, CacheHit};
+use std::{str::FromStr, fmt::Display};
 
 pub async fn get_redis_connection_manager() -> RedisResult<ConnectionManager> {
     let client = Client::open("redis://localhost:6380")?;
@@ -12,7 +12,7 @@ pub async fn get_redis_connection_manager() -> RedisResult<ConnectionManager> {
 pub async fn check_cache(
     req_text: &str,
     mut connection_manager: ConnectionManager,
-) -> Option<String> {
+) -> Option<CacheHit> {
     let mut command = cmd("GET");
     command.arg(req_text);
 
@@ -23,7 +23,16 @@ pub async fn check_cache(
     let redis_response: Result<String, RedisError> = FromRedisValue::from_redis_value(&redis_value);
 
     match redis_response {
-        Ok(cache_hit) => return Some(cache_hit),
+        Ok(cache_hit) => {
+            let original_length = cache_hit.len();
+
+            let source_language = Language::from_str(cache_hit.chars().take(2).collect::<String>().as_str()).unwrap();
+            let translated_text = cache_hit.chars().skip(2).collect::<String>();
+
+            let cache_hit = CacheHit::new(source_language, translated_text);
+
+            return Some(cache_hit);
+        },
         Err(_) => return None,
     }
 }
@@ -31,13 +40,28 @@ pub async fn check_cache(
 pub async fn set_cache(
     req_text: &str,
     res_text: &str,
+    source_language: Language,
     mut connection_manager: ConnectionManager
 ) -> Result<(), RedisError> {
+    let mut cache_value_original = String::new();
+    let mut cache_value_translate = String::new();
+
+    match source_language {
+        Language::EN => {
+            cache_value_original = format!("EN{}", res_text);
+            cache_value_translate = format!("JA{}", req_text);
+        },
+        Language::JA => {
+            cache_value_original = format!("JA{}", res_text);
+            cache_value_translate = format!("EN{}", req_text);
+        }
+    };
+
     let mut set_original_command = cmd("SET");
-    set_original_command.arg(req_text).arg(res_text);
+    set_original_command.arg(req_text).arg(cache_value_original);
 
     let mut set_translated_command = cmd("SET");
-    set_translated_command.arg(res_text).arg(req_text);
+    set_translated_command.arg(res_text).arg(cache_value_translate);
 
     let mut expire_original = cmd("EXPIRE");
     expire_original.arg(10000);

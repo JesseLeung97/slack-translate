@@ -37,9 +37,10 @@ async fn translate(req: SlackIncomingTranslationRequest, state: Extension<Arc<Ap
 
         if let Err(_) = append_to_translation_log(
             user_id, 
-            &Language::from_str(&translation.detected_source_language).unwrap(), 
+            user_name,
+            &cache_check.source_language,
             &message_text, 
-            &cache_check, 
+            &cache_check.translated_text, 
             &state.database_connection
         ) {
             return (
@@ -47,7 +48,7 @@ async fn translate(req: SlackIncomingTranslationRequest, state: Extension<Arc<Ap
                 String::from("Failed to record translation to the database")
                 );
         }
-        return (StatusCode::OK, cache_check);
+        return (StatusCode::OK, cache_check.translated_text);
     }
 
     let input_vector = vec![message_text.clone()];
@@ -71,9 +72,14 @@ async fn translate(req: SlackIncomingTranslationRequest, state: Extension<Arc<Ap
             Language::JA => translated_english,
     };
 
-    if let Err(err) = set_cache(&message_text, &translation.text, state.cache_connection.clone()).await {
-       return (StatusCode::INTERNAL_SERVER_ERROR, err.to_string()); 
-    }
+    if let Err(err) = set_cache(
+        &message_text, 
+        &translation.text, 
+        Language::from_str(translation.detected_source_language.as_str()).unwrap(), 
+        state.cache_connection.clone())
+        .await {
+            return (StatusCode::INTERNAL_SERVER_ERROR, err.to_string()); 
+        }
 
     if let Err(_) = append_to_translation_log(
         user_id, 
