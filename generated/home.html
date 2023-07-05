@@ -4,30 +4,234 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width" />
         <title>Slack-translate analytics</title>
+<style>
+* {
+    box-sizing: border-box;
+}
+html {
+    background: #292929;
+    color: #EBEBEB;
+    font-family: sans-serif;
+}
+body {
+    margin: 0;
+}
+.width-container {
+    margin: 0 auto;
+    max-width 800px;
+    width: 90%;
+}
+.title-container {
+    margin-top: 80px;
+    margin-bottom: 40px;
+    font-size: 2rem;
+}
+.log-container {
+}
+.tl-outer {
+    display: flex;
+    flex-direction: column;
+    margin: 20px 0;
+    width: 100%;
+    background: #1D1E1F;
+    border-radius: 24px;
+    padding: 30px 40px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+}
+.tl-label-outer {
+    display: flex;
+    gap: 30px;
+    justify-content: space-between;
+    font-size: 1.1rem;
+}
+.tl-translation-outer {
+    font-size: 1.25rem;
+    background: #292929;
+    border-radius: 8px;
+    line-height: 1.5;
+}
+.tl-outer > div:nth-child(2) {
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+.tl-type-label {
+    display: inline-block;
+    width: 12%;
+    padding: 4px 0 4px 8px;
+    border-radius: 8px 0 0 8px;
+    margin-right: 20px;
+}
+.lang-flow {
+    background: #292929;
+    line-height: 1.5;
+    border-radius: 8px;
+    padding-right: 6px;
+    overflow: hidden;
+}
+.tl-lang-original {
+    padding: 4px 0px 4px 6px;
+    margin-right: 25px;
+    border-radius: 8px 0 0 8px;
+    background: #FF8500;
+    position: relative;
+    z-index: 0;
+    overflow: hidden;
+}
+.tl-lang-original:before {
+    content: '';
+    position: absolute;
+    display: inline-block;
+    z-index: -1;
+    left: 85%;
+    top: -20%;
+    width: 0;
+    height: 0;
+    border-top: 20px solid transparent;
+    border-bottom: 20px solid transparent;
+    border-left: 20px solid #FF8500;
+}
+.original {
+    background: #FF1BB9;
+}
+.translated {
+    background: #B661FF; 
+}
+.footer-container {
+    margin-top: 40px;
+    margin-bottom: 80px;
+    font-size: 1.25rem;
+</style>
     </head>
     <body>
-        <h1>Inside test</h1>
-        <h1>Total translations: I'm replaced!</h1>
-        <h1>Japanese to English translations: Number two!</h1>
-        <div class="tl-outer">
+        <section class="title-container width-container">
+            <h1>Slack-translate analytics</h1>
+        </section>
+        <section class="log-container width-container">
+            <div class="tl-outer">
             <div class="tl-label-outer">
-                <div class="tl-label-inner">EN</div>
                 <div class="tl-label-inner">2023-06-27 11:10:33</div>
                 <div class="tl-label-inner"></div>
+                <div class="tl-label-inner lang-flow">
+                    <span class="tl-lang-original">EN</span>JA
+                </div>
             </div>
-            <div class="tl-translation-outer">embedded check</div>
-            <div class="tl-translation-outer">埋め込み検査</div>
+            <div class="tl-translation-outer">
+                <span class="tl-type-label original">Original:</span>embedded check
+            </div>
+            <div class="tl-translation-outer">
+                <span class="tl-type-label translated">Translated:</span>埋め込み検査
+            </div>
         </div>
         <div class="tl-outer">
             <div class="tl-label-outer">
-                <div class="tl-label-inner">EN</div>
                 <div class="tl-label-inner">2023-06-27 11:10:33</div>
                 <div class="tl-label-inner"></div>
+                <div class="tl-label-inner lang-flow">
+                    <span class="tl-lang-original">EN</span>JA
+                </div>
             </div>
-            <div class="tl-translation-outer">embedded check</div>
-            <div class="tl-translation-outer">埋め込み検査</div>
+            <div class="tl-translation-outer">
+                <span class="tl-type-label original">Original:</span>embedded check
+            </div>
+            <div class="tl-translation-outer">
+                <span class="tl-type-label translated">Translated:</span>埋め込み検査
+            </div>
+        </div>
+        <div class="tl-outer">
+            <div class="tl-label-outer">
+                <div class="tl-label-inner">2023-07-04 15:57:09</div>
+                <div class="tl-label-inner">jessetleung</div>
+                <div class="tl-label-inner lang-flow">
+                    <span class="tl-lang-original">EN</span>JA
+                </div>
+            </div>
+            <div class="tl-translation-outer">
+                <span class="tl-type-label original">Original:</span>test
+            </div>
+            <div class="tl-translation-outer">
+                <span class="tl-type-label translated">Translated:</span>テスト
+            </div>
+        </div>
+        <div class="tl-outer">
+            <div class="tl-label-outer">
+                <div class="tl-label-inner">2023-07-04 16:03:44</div>
+                <div class="tl-label-inner">jessetleung</div>
+                <div class="tl-label-inner lang-flow">
+                    <span class="tl-lang-original">EN</span>JA
+                </div>
+            </div>
+            <div class="tl-translation-outer">
+                <span class="tl-type-label original">Original:</span>translate me
+            </div>
+            <div class="tl-translation-outer">
+                <span class="tl-type-label translated">Translated:</span>翻訳してくれ
+            </div>
+        </div>
+        <div class="tl-outer">
+            <div class="tl-label-outer">
+                <div class="tl-label-inner">2023-07-04 16:04:10</div>
+                <div class="tl-label-inner">jessetleung</div>
+                <div class="tl-label-inner lang-flow">
+                    <span class="tl-lang-original">EN</span>JA
+                </div>
+            </div>
+            <div class="tl-translation-outer">
+                <span class="tl-type-label original">Original:</span>translate me
+            </div>
+            <div class="tl-translation-outer">
+                <span class="tl-type-label translated">Translated:</span>翻訳してくれ
+            </div>
+        </div>
+        <div class="tl-outer">
+            <div class="tl-label-outer">
+                <div class="tl-label-inner">2023-07-04 16:11:09</div>
+                <div class="tl-label-inner">jessetleung</div>
+                <div class="tl-label-inner lang-flow">
+                    <span class="tl-lang-original">EN</span>JA
+                </div>
+            </div>
+            <div class="tl-translation-outer">
+                <span class="tl-type-label original">Original:</span>translate me
+            </div>
+            <div class="tl-translation-outer">
+                <span class="tl-type-label translated">Translated:</span>翻訳してくれ
+            </div>
+        </div>
+        <div class="tl-outer">
+            <div class="tl-label-outer">
+                <div class="tl-label-inner">2023-07-04 16:11:28</div>
+                <div class="tl-label-inner">jessetleung</div>
+                <div class="tl-label-inner lang-flow">
+                    <span class="tl-lang-original">EN</span>JA
+                </div>
+            </div>
+            <div class="tl-translation-outer">
+                <span class="tl-type-label original">Original:</span>translate me
+            </div>
+            <div class="tl-translation-outer">
+                <span class="tl-type-label translated">Translated:</span>翻訳してくれ
+            </div>
+        </div>
+        <div class="tl-outer">
+            <div class="tl-label-outer">
+                <div class="tl-label-inner">2023-07-05 16:31:35</div>
+                <div class="tl-label-inner">jessetleung</div>
+                <div class="tl-label-inner lang-flow">
+                    <span class="tl-lang-original">JA</span>EN
+                </div>
+            </div>
+            <div class="tl-translation-outer">
+                <span class="tl-type-label original">Original:</span>日本語から英語のテスト
+            </div>
+            <div class="tl-translation-outer">
+                <span class="tl-type-label translated">Translated:</span>Japanese to English Test
+            </div>
         </div>
         
+        </section>
+        <section class="footer-container width-container">
+            <a href="https://github.com/JesseLeung97/slack-translate" target="_blank">Github</a>
+        </section>
     </body>
 </html>
 

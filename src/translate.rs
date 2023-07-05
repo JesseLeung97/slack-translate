@@ -6,7 +6,7 @@ use crate::cache::{check_cache, set_cache};
 use crate::database::append_to_translation_log;
 use crate::deepl::get_translation;
 use crate::models::{
-    AppState, DeepLPostBody, Language, SlackIncomingTranslationRequest, SlackPayload,
+    AppState, DeepLPostBody, Language, SlackIncomingTranslationRequest, SlackPayload, DeepLTranslation,
 };
 use crate::slackbot::send_translation_reply;
 
@@ -24,7 +24,10 @@ async fn translate(req: SlackIncomingTranslationRequest, state: Extension<Arc<Ap
 
     let form_body = match from_str::<SlackPayload>(req.payload.as_str()) {
         Ok(fb) => fb,
-        Err(err) => return (StatusCode::INTERNAL_SERVER_ERROR, err.to_string()),
+        Err(err) => {
+            println!("{}", err.to_string());
+            return (StatusCode::INTERNAL_SERVER_ERROR, err.to_string());
+        },
     };
 
     let message_text = &form_body.message.text;
@@ -35,7 +38,7 @@ async fn translate(req: SlackIncomingTranslationRequest, state: Extension<Arc<Ap
         // aA
         // pend to translate log 
 
-        if let Err(_) = append_to_translation_log(
+        if let Err(err) = append_to_translation_log(
             user_id, 
             user_name,
             &cache_check.source_language,
@@ -43,11 +46,26 @@ async fn translate(req: SlackIncomingTranslationRequest, state: Extension<Arc<Ap
             &cache_check.translated_text, 
             &state.database_connection
         ) {
+            println!("{}", err.to_string());
             return (
                 StatusCode::INTERNAL_SERVER_ERROR,
                 String::from("Failed to record translation to the database")
                 );
         }
+
+        let translation = DeepLTranslation {
+            text: cache_check.translated_text.clone(),
+            detected_source_language: cache_check.source_language.to_string()
+        };
+
+
+        match send_translation_reply(&translation, &form_body).await {
+            Ok(_) => (StatusCode::OK, translation.text),
+            Err(err) => {
+                println!("{}", err.to_string()); 
+                return (StatusCode::INTERNAL_SERVER_ERROR, String::from("Failed to translate message"));
+            },
+        };
         return (StatusCode::OK, cache_check.translated_text);
     }
 
@@ -58,12 +76,18 @@ async fn translate(req: SlackIncomingTranslationRequest, state: Extension<Arc<Ap
 
     let translated_english = match get_translation(deepl_post_body_english).await {
         Ok(res) => res,
-        Err(err) => return (StatusCode::INTERNAL_SERVER_ERROR, err.to_string()),
+        Err(err) => {
+            println!("{}", err.to_string());
+            return (StatusCode::INTERNAL_SERVER_ERROR, err.to_string());
+        }
     };
 
     let translated_japanese = match get_translation(deepl_post_body_japanese).await {
         Ok(res) => res,
-        Err(err) => return (StatusCode::INTERNAL_SERVER_ERROR, err.to_string()),
+        Err(err) => {
+            println!("{}", err.to_string());
+            return (StatusCode::INTERNAL_SERVER_ERROR, err.to_string());
+        }
     };
 
     let translation =
@@ -78,10 +102,11 @@ async fn translate(req: SlackIncomingTranslationRequest, state: Extension<Arc<Ap
         Language::from_str(translation.detected_source_language.as_str()).unwrap(), 
         state.cache_connection.clone())
         .await {
+            println!("{}", err.to_string());
             return (StatusCode::INTERNAL_SERVER_ERROR, err.to_string()); 
         }
 
-    if let Err(_) = append_to_translation_log(
+    if let Err(err) = append_to_translation_log(
         user_id, 
         user_name,
         &Language::from_str(&translation.detected_source_language).unwrap(), 
@@ -89,6 +114,7 @@ async fn translate(req: SlackIncomingTranslationRequest, state: Extension<Arc<Ap
         &translation.text, 
         &state.database_connection
     ) {
+        println!("{}", err.to_string());
         return (
             StatusCode::INTERNAL_SERVER_ERROR,
             String::from("Failed to record translation to the database")
@@ -97,9 +123,9 @@ async fn translate(req: SlackIncomingTranslationRequest, state: Extension<Arc<Ap
 
     match send_translation_reply(&translation, &form_body).await {
         Ok(_) => (StatusCode::OK, translation.text),
-        Err(_) => (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            String::from("Failed to translate message"),
-        ),
+        Err(err) => {
+           println!("{}", err.to_string()); 
+           return (StatusCode::INTERNAL_SERVER_ERROR, String::from("Failed to translate message"));
+        },
     }
 }

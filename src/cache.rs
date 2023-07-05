@@ -1,9 +1,9 @@
 use redis::{aio::ConnectionManager, cmd, Client, FromRedisValue, RedisError, RedisResult, Pipeline};
 use crate::models::{Language, CacheHit};
-use std::{str::FromStr, fmt::Display};
+use std::str::FromStr;
 
 pub async fn get_redis_connection_manager() -> RedisResult<ConnectionManager> {
-    let client = Client::open("redis://localhost:6380")?;
+    let client = Client::open("redis://127.0.0.1:6380")?;
     let connection_manager = ConnectionManager::new(client).await?;
 
     Ok(connection_manager)
@@ -24,8 +24,6 @@ pub async fn check_cache(
 
     match redis_response {
         Ok(cache_hit) => {
-            let original_length = cache_hit.len();
-
             let source_language = Language::from_str(cache_hit.chars().take(2).collect::<String>().as_str()).unwrap();
             let translated_text = cache_hit.chars().skip(2).collect::<String>();
 
@@ -43,8 +41,8 @@ pub async fn set_cache(
     source_language: Language,
     mut connection_manager: ConnectionManager
 ) -> Result<(), RedisError> {
-    let mut cache_value_original = String::new();
-    let mut cache_value_translate = String::new();
+    let cache_value_original: String;
+    let cache_value_translate: String ;
 
     match source_language {
         Language::EN => {

@@ -7,7 +7,7 @@ use serde::{Serialize, Deserialize};
 use sqlite::ConnectionWithFullMutex;
 use std::fmt::Display;
 use crate::analytics::get_analytics;
-use crate::models::TranslationLog;
+use crate::models::{TranslationLog, Language};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub enum Placeholder {
@@ -84,28 +84,34 @@ pub fn populate_html(filename: &str, database_connection: &ConnectionWithFullMut
 fn loop_translation_log(translation_logs: Vec<TranslationLog>) -> String {
     let mut populated_translation_logs = String::new();
     translation_logs.iter().for_each(|translation_log| {
+        let translation_res_language = match translation_log.language {
+            Language::EN => Language::JA.to_string(),
+            Language::JA => Language::EN.to_string()
+        };
         let html_string = format!(
         "<div class=\"tl-outer\">
             <div class=\"tl-label-outer\">
                 <div class=\"tl-label-inner\">{}</div>
                 <div class=\"tl-label-inner\">{}</div>
-                <div class=\"tl-label-inner\">{}</div>
+                <div class=\"tl-label-inner lang-flow\">
+                    <span class=\"tl-lang-original\">{}</span>{}
+                </div>
             </div>
-            <div class=\"tl-translation-outer\">{}</div>
-            <div class=\"tl-translation-outer\">{}</div>
+            <div class=\"tl-translation-outer\">
+                <span class=\"tl-type-label original\">Original:</span>{}
+            </div>
+            <div class=\"tl-translation-outer\">
+                <span class=\"tl-type-label translated\">Translated:</span>{}
+            </div>
         </div>
         ",
-            translation_log.language.to_string(),
             translation_log.created,
             translation_log.user_name,
+            translation_log.language.to_string(),
+            translation_res_language,
             translation_log.original_text,
             translation_log.translated_text
         );
-
-
-        println!("{:?}", translation_log.original_text);
-        
-        println!("{:?}", translation_log.translated_text);
 
         populated_translation_logs.push_str(html_string.as_str());
 
