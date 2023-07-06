@@ -98,10 +98,12 @@ fn loop_translation_log(translation_logs: Vec<TranslationLog>) -> String {
                 </div>
             </div>
             <div class=\"tl-translation-outer\">
-                <span class=\"tl-type-label original\">Original:</span>{}
+                <span class=\"tl-type-label original\">Original:</span>
+                <span class=\"tl-content\">{}</span>
             </div>
             <div class=\"tl-translation-outer\">
-                <span class=\"tl-type-label translated\">Translated:</span>{}
+                <span class=\"tl-type-label translated\">Translated:</span>
+                <span class=\"tl-content\">{}</span>
             </div>
         </div>
         ",
