@@ -16,6 +16,13 @@ html {
 body {
     margin: 0;
 }
+a:hover, a:visited, a:link, a:active {
+    text-decoration: none;
+    color: #EBEBEB;
+}
+a:hover {
+    border-bottom: 2px solid #FFC300;
+}
 .width-container {
     margin: 0 auto;
     max-width 800px;
@@ -108,19 +115,157 @@ body {
     background: #B661FF; 
 }
 .footer-container {
-    margin-top: 40px;
+    margin-top: 120px;
     margin-bottom: 80px;
     font-size: 1.25rem;
+}
+.overview-container {
+    display: flex;
+    gap: 20px;
+}
+.overview-bg {
+    padding: 30px;
+    background: #1D1E1F;
+    border-radius: 24px;
+}
+.totals {
+    flex: 1;
+}
+.days {
+    flex: 2;
+}
+.lcg-outer-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.lcg-container {
+    line-height: 1.5;
+    border-radius: 8px;
+    background: #292929;
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+}
+.lcg-lang-text {
+    line-height: 1.5;
+    font-size: 1.1rem;
+    display: inline-block;
+    float: left;
+    overflow: unset;
+}
+.lcg-lang-text:before {
+    left: 93%;
+    top: -10%;
+}
+.lcg-res-text {
+    padding: 4px 0;
+}
+.lcg-ja, .lcg-en {
+    float: left;
+    line-height: 1.5;
+    display: inline-block;
+    align-self: flex-start;
+}
+.lcg-ja-bar, .lcg-en-bar {
+    position: absolute;
+    height: 100%;
+}
+.lcg-lang-text-en {
+    background: #FFC300;
+}
+.lcg-lang-text-en:before {
+    border-left: 20px solid #FFC300;
+}
+.lcg-lang-text-ja {
+    background: #FF8500;
+}
+.lcg-lang-text-ja:before {
+    border-left: 20px solid #FF8500;
+}
+.lcg-tl-count {
+    float: left;
+    display: inline-block;
+    padding: 4px 0;
+    font-size: 1.1rem;
+    line-height: 1.5;
+}
+.lcg-tl-total {
+    padding: 4px 0;
+    font-size: 1.1rem;
+    line-height: 1.5;
+}
+.lcg-total {
+    font-size: 3rem;
+    font-weight: 700;
+    padding-right: 10px;
+    line-height: 1;
+    color: #00DEE2;
+}
+.lcg-lang-container {
+    display: flex;
+    justify-content: space-between;
+}
+.lcg-lang-count {
+    font-weight: 700;
+    font-size: 3rem;
+    line-height: 0.1;
+    padding-right: 10px;
+}
+.lcg-ja-bar {
+    right: 0;
+    background: #FF8500;
+    border-radius: 0 8px 8px 0;
+    border-left: 3px solid #292929;
+}
+.lcg-en-bar {
+    background: #FFC300;
+    border-radius: 8px 0 0 8px;
+    border-right: 3px solid #292929;
+}
+.placeholder {
+    padding: 4px 0;
+    color: rgba(0, 0, 0, 0.5);
+}
+    
 </style>
     </head>
     <body>
         <section class="title-container width-container">
             <h1>Slack-translate analytics</h1>
         </section>
+        <section class="overview-container width-container">
+            <div class="totals overview-bg">
+                <div class="lcg-outer-container">
+                    <div class="lcg-tl-total"><span class="lcg-total">14</span> total translations</div>
+                    <div class="lcg-lang-container">
+                        <div class="lcg-tl-count"><span class="lcg-lang-count">10</span> translations from English</div>
+                        <div class="lcg-en tl-label-inner lang-flow">
+                            <span class="lcg-lang-text lcg-lang-text-en tl-lang-original">EN</span>
+                            <span class="lcg-lang-text lcg-res-text">JA</span>
+                        </div>
+                    </div>
+                    <div class="lcg-lang-container">
+                        <div class="lcg-tl-count"><span class="lcg-lang-count">4</span> translations from Japanese</div>
+                        <div class="lcg-ja tl-label-inner lang-flow">
+                            <span class="lcg-lang-text lcg-lang-text-ja tl-lang-original">JA</span>
+                            <span class="lcg-lang-text lcg-res-text">EN</span>
+                        </div>
+                    </div>
+                    <div class="lcg-container">
+                        <div class="placeholder">Placeholder</div>
+                        <div class="lcg-en-bar" style="width:71%;"></div>
+                        <div class="lcg-ja-bar" style="width:29%;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="days overview-bg">
+            </div>
+        </section>
         <section class="log-container width-container">
             <div class="tl-outer">
             <div class="tl-label-outer">
-                <div class="tl-label-inner">2023-06-27 11:10:33</div>
+                <div class="tl-label-inner">2023-06-27 </div>
                 <div class="tl-label-inner"></div>
                 <div class="tl-label-inner lang-flow">
                     <span class="tl-lang-original">EN</span>JA
@@ -137,7 +282,7 @@ body {
         </div>
         <div class="tl-outer">
             <div class="tl-label-outer">
-                <div class="tl-label-inner">2023-06-27 11:10:33</div>
+                <div class="tl-label-inner">2023-06-27 </div>
                 <div class="tl-label-inner"></div>
                 <div class="tl-label-inner lang-flow">
                     <span class="tl-lang-original">EN</span>JA
@@ -154,7 +299,7 @@ body {
         </div>
         <div class="tl-outer">
             <div class="tl-label-outer">
-                <div class="tl-label-inner">2023-07-04 15:57:09</div>
+                <div class="tl-label-inner">2023-07-04 </div>
                 <div class="tl-label-inner">jessetleung</div>
                 <div class="tl-label-inner lang-flow">
                     <span class="tl-lang-original">EN</span>JA
@@ -171,7 +316,7 @@ body {
         </div>
         <div class="tl-outer">
             <div class="tl-label-outer">
-                <div class="tl-label-inner">2023-07-04 16:03:44</div>
+                <div class="tl-label-inner">2023-07-04 </div>
                 <div class="tl-label-inner">jessetleung</div>
                 <div class="tl-label-inner lang-flow">
                     <span class="tl-lang-original">EN</span>JA
@@ -188,7 +333,7 @@ body {
         </div>
         <div class="tl-outer">
             <div class="tl-label-outer">
-                <div class="tl-label-inner">2023-07-04 16:04:10</div>
+                <div class="tl-label-inner">2023-07-04 </div>
                 <div class="tl-label-inner">jessetleung</div>
                 <div class="tl-label-inner lang-flow">
                     <span class="tl-lang-original">EN</span>JA
@@ -205,7 +350,7 @@ body {
         </div>
         <div class="tl-outer">
             <div class="tl-label-outer">
-                <div class="tl-label-inner">2023-07-04 16:11:09</div>
+                <div class="tl-label-inner">2023-07-04 </div>
                 <div class="tl-label-inner">jessetleung</div>
                 <div class="tl-label-inner lang-flow">
                     <span class="tl-lang-original">EN</span>JA
@@ -222,7 +367,7 @@ body {
         </div>
         <div class="tl-outer">
             <div class="tl-label-outer">
-                <div class="tl-label-inner">2023-07-04 16:11:28</div>
+                <div class="tl-label-inner">2023-07-04 </div>
                 <div class="tl-label-inner">jessetleung</div>
                 <div class="tl-label-inner lang-flow">
                     <span class="tl-lang-original">EN</span>JA
@@ -239,7 +384,7 @@ body {
         </div>
         <div class="tl-outer">
             <div class="tl-label-outer">
-                <div class="tl-label-inner">2023-07-05 16:31:35</div>
+                <div class="tl-label-inner">2023-07-05 </div>
                 <div class="tl-label-inner">jessetleung</div>
                 <div class="tl-label-inner lang-flow">
                     <span class="tl-lang-original">JA</span>EN
@@ -256,7 +401,7 @@ body {
         </div>
         <div class="tl-outer">
             <div class="tl-label-outer">
-                <div class="tl-label-inner">2023-07-06 00:38:57</div>
+                <div class="tl-label-inner">2023-07-06 </div>
                 <div class="tl-label-inner">jessetleung</div>
                 <div class="tl-label-inner lang-flow">
                     <span class="tl-lang-original">JA</span>EN
@@ -273,7 +418,7 @@ body {
         </div>
         <div class="tl-outer">
             <div class="tl-label-outer">
-                <div class="tl-label-inner">2023-07-06 00:39:34</div>
+                <div class="tl-label-inner">2023-07-06 </div>
                 <div class="tl-label-inner">jessetleung</div>
                 <div class="tl-label-inner lang-flow">
                     <span class="tl-lang-original">JA</span>EN
@@ -290,7 +435,7 @@ body {
         </div>
         <div class="tl-outer">
             <div class="tl-label-outer">
-                <div class="tl-label-inner">2023-07-06 00:58:24</div>
+                <div class="tl-label-inner">2023-07-06 </div>
                 <div class="tl-label-inner">jessetleung</div>
                 <div class="tl-label-inner lang-flow">
                     <span class="tl-lang-original">EN</span>JA
@@ -307,7 +452,7 @@ body {
         </div>
         <div class="tl-outer">
             <div class="tl-label-outer">
-                <div class="tl-label-inner">2023-07-06 00:59:22</div>
+                <div class="tl-label-inner">2023-07-06 </div>
                 <div class="tl-label-inner">jessetleung</div>
                 <div class="tl-label-inner lang-flow">
                     <span class="tl-lang-original">EN</span>JA
@@ -324,7 +469,7 @@ body {
         </div>
         <div class="tl-outer">
             <div class="tl-label-outer">
-                <div class="tl-label-inner">2023-07-06 01:16:32</div>
+                <div class="tl-label-inner">2023-07-06 </div>
                 <div class="tl-label-inner">jessetleung</div>
                 <div class="tl-label-inner lang-flow">
                     <span class="tl-lang-original">EN</span>JA
@@ -343,10 +488,27 @@ Trying out a very long message to see if the UI will break when the message goes
 メッセージが複数行になるとUIが壊れるかどうか、非常に長いメッセージを試してみる。もしそうなら、修正するのは面倒ですが、やります。テストするには十分な長さになると思う。</span>
             </div>
         </div>
+        <div class="tl-outer">
+            <div class="tl-label-outer">
+                <div class="tl-label-inner">2023-07-06 </div>
+                <div class="tl-label-inner">jessetleung</div>
+                <div class="tl-label-inner lang-flow">
+                    <span class="tl-lang-original">JA</span>EN
+                </div>
+            </div>
+            <div class="tl-translation-outer">
+                <span class="tl-type-label original">Original:</span>
+                <span class="tl-content">パーセントを見せるテスト</span>
+            </div>
+            <div class="tl-translation-outer">
+                <span class="tl-type-label translated">Translated:</span>
+                <span class="tl-content">Tests that show percentages</span>
+            </div>
+        </div>
         
         </section>
         <section class="footer-container width-container">
-            <a href="https://github.com/JesseLeung97/slack-translate" target="_blank">Github</a>
+            <a href="https://github.com/JesseLeung97/slack-translate" target="_blank">Check out the source code on Github</a>
         </section>
     </body>
 </html>
