@@ -9,6 +9,11 @@ use std::fmt::Display;
 use crate::analytics::{get_analytics, self};
 use crate::models::{TranslationLog, Language};
 
+#[derive(Serialize)]
+struct Context {
+}
+
+
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub enum Placeholder {
     Value,

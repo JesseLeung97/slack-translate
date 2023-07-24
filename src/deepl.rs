@@ -11,7 +11,7 @@ pub async fn get_translation(post_body: DeepLPostBody) -> Result<DeepLTranslatio
     let deepl_auth_token = env::var("DEEPL_AUTH_TOKEN").expect("DEEPL_AUTH_TOKEN must be defined");
 
     let client = reqwest::Client::new();
-    let response = client
+    let res = client
         .post(url)
         .header(
             reqwest::header::AUTHORIZATION,
@@ -21,9 +21,9 @@ pub async fn get_translation(post_body: DeepLPostBody) -> Result<DeepLTranslatio
         .send()
         .await?;
 
-    let deepl_response = from_str::<DeepLResponse>(response.text().await?.as_str())?;
+    let deepl_res = from_str::<DeepLResponse>(res.text().await?.as_str())?;
 
-    if let Some(translation) = deepl_response.translations.first() {
+    if let Some(translation) = deepl_res.translations.first() {
         return Ok(translation.to_owned());
     } else {
         return Err("Translation failed".into());

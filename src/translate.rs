@@ -8,13 +8,12 @@ use crate::deepl::get_translation;
 use crate::models::{
     AppState, DeepLPostBody, Language, SlackIncomingTranslationRequest, SlackPayload, DeepLTranslation,
 };
-use crate::slackbot::send_translation_reply;
+use crate::slackbot::{send_translation_reply, log_error};
 
 pub async fn receive_translation_request(
     state: Extension<Arc<AppState>>,
     Form(req): Form<SlackIncomingTranslationRequest>,
 ) -> StatusCode {
-    
     tokio::spawn(translate(req, state));
     StatusCode::OK
 }
@@ -25,7 +24,7 @@ async fn translate(req: SlackIncomingTranslationRequest, state: Extension<Arc<Ap
     let form_body = match from_str::<SlackPayload>(req.payload.as_str()) {
         Ok(fb) => fb,
         Err(err) => {
-            println!("{}", err.to_string());
+            log_error(err.to_string());
             return (StatusCode::INTERNAL_SERVER_ERROR, err.to_string());
         },
     };
@@ -35,9 +34,6 @@ async fn translate(req: SlackIncomingTranslationRequest, state: Extension<Arc<Ap
     let user_name = &form_body.user.username;
 
     if let Some(cache_check) = check_cache(message_text, state.cache_connection.clone()).await {
-        // aA
-        // pend to translate log 
-
         if let Err(err) = append_to_translation_log(
             user_id, 
             user_name,
@@ -46,11 +42,11 @@ async fn translate(req: SlackIncomingTranslationRequest, state: Extension<Arc<Ap
             &cache_check.translated_text, 
             &state.database_connection
         ) {
-            println!("{}", err.to_string());
+            log_error(err.to_string());
             return (
                 StatusCode::INTERNAL_SERVER_ERROR,
                 String::from("Failed to record translation to the database")
-                );
+            );
         }
 
         let translation = DeepLTranslation {
@@ -62,7 +58,7 @@ async fn translate(req: SlackIncomingTranslationRequest, state: Extension<Arc<Ap
         match send_translation_reply(&translation, &form_body).await {
             Ok(_) => (StatusCode::OK, translation.text),
             Err(err) => {
-                println!("{}", err.to_string()); 
+                log_error(err.to_string());
                 return (StatusCode::INTERNAL_SERVER_ERROR, String::from("Failed to translate message"));
             },
         };
@@ -77,7 +73,7 @@ async fn translate(req: SlackIncomingTranslationRequest, state: Extension<Arc<Ap
     let translated_english = match get_translation(deepl_post_body_english).await {
         Ok(res) => res,
         Err(err) => {
-            println!("{}", err.to_string());
+            log_error(err.to_string());
             return (StatusCode::INTERNAL_SERVER_ERROR, err.to_string());
         }
     };
@@ -85,7 +81,7 @@ async fn translate(req: SlackIncomingTranslationRequest, state: Extension<Arc<Ap
     let translated_japanese = match get_translation(deepl_post_body_japanese).await {
         Ok(res) => res,
         Err(err) => {
-            println!("{}", err.to_string());
+            log_error(err.to_string());
             return (StatusCode::INTERNAL_SERVER_ERROR, err.to_string());
         }
     };
@@ -102,7 +98,7 @@ async fn translate(req: SlackIncomingTranslationRequest, state: Extension<Arc<Ap
         Language::from_str(translation.detected_source_language.as_str()).unwrap(), 
         state.cache_connection.clone())
         .await {
-            println!("{}", err.to_string());
+            log_error(err.to_string());
             return (StatusCode::INTERNAL_SERVER_ERROR, err.to_string()); 
         }
 
@@ -114,7 +110,7 @@ async fn translate(req: SlackIncomingTranslationRequest, state: Extension<Arc<Ap
         &translation.text, 
         &state.database_connection
     ) {
-        println!("{}", err.to_string());
+        log_error(err.to_string());
         return (
             StatusCode::INTERNAL_SERVER_ERROR,
             String::from("Failed to record translation to the database")
@@ -124,8 +120,9 @@ async fn translate(req: SlackIncomingTranslationRequest, state: Extension<Arc<Ap
     match send_translation_reply(&translation, &form_body).await {
         Ok(_) => (StatusCode::OK, translation.text),
         Err(err) => {
-           println!("{}", err.to_string()); 
-           return (StatusCode::INTERNAL_SERVER_ERROR, String::from("Failed to translate message"));
+            log_error(err.to_string());
+            return (StatusCode::INTERNAL_SERVER_ERROR, String::from("Failed to translate message"));
         },
     }
 }
+

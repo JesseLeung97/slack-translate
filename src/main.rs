@@ -21,9 +21,9 @@ mod database;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
-    let redis_connection = get_redis_connection_manager().await?;
-    let database_connection = get_database_connection_manager()?;
-    let app_state = AppState::new(redis_connection, database_connection);
+    let redis_conn = get_redis_connection_manager().await?;
+    let db_conn = get_database_connection_manager()?;
+    let app_state = AppState::new(redis_conn, db_conn);
 
     let app_state = Arc::new(app_state);
 

@@ -13,13 +13,9 @@ pub struct SlackSendMessageRequest {
     pub thread_ts: String
 }
 
-impl SlackSendMessageRequest {
-    pub fn new(text: &str, thread_ts: &str) -> SlackSendMessageRequest {
-        SlackSendMessageRequest { 
-            text: text.to_string(),
-            response_type: String::from("in_channel"),
-            replace_original: false,
-            thread_ts: thread_ts.to_string()
-        }
-    }
+#[derive(Debug, Serialize)]
+pub struct SlackSendErrorRquest {
+    pub channel: String,
+    pub text: String,
 }
+    

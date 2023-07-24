@@ -1,3 +1,4 @@
+static HOME_TEMPLATE: &'static str = r#"
 <!DOCTYPE html>
 <html lang="en-us">
     <head>
@@ -237,16 +238,16 @@ a:hover {
         <section class="overview-container width-container">
             <div class="totals overview-bg">
                 <div class="lcg-outer-container">
-                    <div class="lcg-tl-total"><span class="lcg-total">{Value}</span> total translations</div>
+                    <div class="lcg-tl-total"><span class="lcg-total">{tl_total}</span> total translations</div>
                     <div class="lcg-lang-container">
-                        <div class="lcg-tl-count"><span class="lcg-lang-count">{Value}</span> translations from English</div>
+                        <div class="lcg-tl-count"><span class="lcg-lang-count">{en_ja_tl}</span> translations from English</div>
                         <div class="lcg-en tl-label-inner lang-flow">
                             <span class="lcg-lang-text lcg-lang-text-en tl-lang-original">EN</span>
                             <span class="lcg-lang-text lcg-res-text">JA</span>
                         </div>
                     </div>
                     <div class="lcg-lang-container">
-                        <div class="lcg-tl-count"><span class="lcg-lang-count">{Value}</span> translations from Japanese</div>
+                        <div class="lcg-tl-count"><span class="lcg-lang-count">{ja_en_tl}</span> translations from Japanese</div>
                         <div class="lcg-ja tl-label-inner lang-flow">
                             <span class="lcg-lang-text lcg-lang-text-ja tl-lang-original">JA</span>
                             <span class="lcg-lang-text lcg-res-text">EN</span>
@@ -270,3 +271,4 @@ a:hover {
         </section>
     </body>
 </html>
+"#;

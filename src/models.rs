@@ -1,7 +1,7 @@
 mod slack_payload;
 pub use self::slack_payload::{SlackChannel, SlackMessage, SlackPayload, SlackUser};
 mod slack_request;
-pub use self::slack_request::{SlackIncomingTranslationRequest, SlackSendMessageRequest};
+pub use self::slack_request::{SlackIncomingTranslationRequest, SlackSendMessageRequest, SlackSendErrorRquest};
 mod deepl_payload;
 pub use self::deepl_payload::DeepLPostBody;
 mod deepl_response;
